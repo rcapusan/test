@@ -1,0 +1,182 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CollectorToolApi",
+    "version": "1.0",
+    "description": "API for serving images and image-related information"
+  },
+  "servers": [
+    {
+      "url": "http://collector-tool-api-url",
+      "description": "CollectorToolApi"
+    }
+  ],
+  "paths": {
+    "/imageforweb/{imageid}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "imageid",
+          "in": "path",
+          "required": true,
+          "description": "Master ID of the image"
+        }
+      ],
+      "post": {
+        "summary": "Get image for web display",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  }
+                },
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Image Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "501": {
+            "description": "Not Implemented"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          }
+        },
+        "operationId": "post-imageforweb-imageid",
+        "description": "Returns a web-optimized image by ID at the size specified in the request body. POST will avoid caching the response.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "height": {
+                    "type": "integer",
+                    "description": "Value of the image height. Width will be automatically scaled"
+                  },
+                  "watermark": {
+                    "type": "boolean",
+                    "description": "true if we need a watermarked image, false for clean one"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "By default type is jpeg. This property might specify a different agreed return type"
+                  }
+                }
+              }
+            }
+          },
+          "description": "{\n  height: 500,\n  watermark: true,\n  type: jpeg\n}"
+        },
+        "security": [
+          {
+            "API Key - 1": []
+          }
+        ]
+      }
+    },
+    "/imageforweb/changes-since/{date}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "date",
+          "in": "path",
+          "required": true,
+          "description": "date in format yyyy-mm-dd"
+        }
+      ],
+      "get": {
+        "summary": "Retruns the updates and additions since the requested date",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "imageId": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "description": "date the image was created"
+                      },
+                      "modifiedAt": {
+                        "type": "string",
+                        "description": "Date the image was updated (if available)"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "501": {
+            "description": "Not Implemented"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          },
+          "504": {
+            "description": "Gateway Timeout"
+          }
+        },
+        "operationId": "get-imageforweb-changes-since-date",
+        "description": "Returns a collection of images destined for web display that were added or changed since the requested date"
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "API Key - 1": {
+        "name": "API Key",
+        "type": "apiKey",
+        "in": "header"
+      }
+    }
+  }
+}
