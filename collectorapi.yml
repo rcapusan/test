@@ -8,6 +8,8 @@ info:
 tags:
   - name: piclib
     description: Picture Library related calls
+  - name: workflow
+    description: Workflow related calls
 servers:
   - url: 'http://collector-tool-api-url'
     description: CollectorToolApi
