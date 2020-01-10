@@ -2,11 +2,62 @@ openapi: 3.0.0
 info:
   title: CollectorToolApi
   version: '1.0'
-  description: API for serving Picture Library images and image-related information
+  description: API for serving images and image-related information
+  contact:
+    name: FM
+tags:
+  - name: piclib
+    description: Picture Library related calls
 servers:
   - url: 'http://collector-tool-api-url'
     description: CollectorToolApi
 paths:
+  '/api/piclib/images/changes/{date}':
+    parameters:
+      - schema:
+          type: string
+        name: date
+        in: path
+        required: true
+        description: date in format yyyy-mm-dd
+    post:
+      summary: Retruns the updates and additions since the requested date
+      tags:
+        - piclib
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    imageId:
+                      type: string
+                    createdAt:
+                      type: string
+                      description: date the image was created
+                    modifiedAt:
+                      type: string
+                      description: Date the image was updated (if available)
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+        '501':
+          description: Not Implemented
+        '503':
+          description: Service Unavailable
+        '504':
+          description: Gateway Timeout
+      operationId: get-imageforweb-changes-since-date
+      description: Returns a collection of images destined for web display that were added or changed since the requested date
   '/api/piclib/images/{imageid}':
     parameters:
       - schema:
@@ -17,7 +68,6 @@ paths:
         description: Master ID of the image
     post:
       summary: Get image for web display
-      tags: []
       responses:
         '200':
           description: OK
@@ -62,59 +112,17 @@ paths:
                 type:
                   type: string
                   description: By default type is jpeg. This property might specify a different agreed return type
-        description: |-
-          {
-            height: 500,
-            watermark: true,
-            type: jpeg
-          }
+            examples:
+              'Watermarked image, height 500 px ':
+                value:
+                  height: 500
+                  watermark: 'true'
+                  type: jpeg
+        description: 'Request object mandatory properties: height'
       security:
         - API Key - 1: []
-  '/api/piclib/images/changes/{date}':
-    parameters:
-      - schema:
-          type: string
-        name: date
-        in: path
-        required: true
-        description: UTC date in format yyyy-mm-dd
-    get:
-      summary: Retruns the updates and additions since the requested date
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    imageId:
-                      type: string
-                    createdAt:
-                      type: string
-                      description: date the image was created
-                    modifiedAt:
-                      type: string
-                      description: Date the image was updated (if available)
-        '400':
-          description: Bad Request
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not Found
-        '500':
-          description: Internal Server Error
-        '501':
-          description: Not Implemented
-        '503':
-          description: Service Unavailable
-        '504':
-          description: Gateway Timeout
-      operationId: get-imageforweb-changes-since-date
-      description: Returns a collection of images destined for web display that were added or changed since the requested date
+      tags:
+        - piclib
 components:
   securitySchemes:
     API Key - 1:
